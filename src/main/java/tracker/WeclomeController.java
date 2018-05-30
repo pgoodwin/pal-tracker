@@ -7,6 +7,6 @@ import org.springframework.web.bind.annotation.RestController;
 public class WeclomeController {
     @GetMapping("/")
     public String sayHello() {
-        return "Slip me some skin bro";
+        return "hello";
     }
 }

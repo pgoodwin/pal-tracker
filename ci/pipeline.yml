@@ -1,0 +1,88 @@
+---
+resource_types:
+  - name: google-cloud-storage
+    type: docker-image
+    source:
+      repository: frodenas/gcs-resource
+
+resources:
+- name: pal-tracker
+  type: git
+  source:
+    uri: ((yellow-pal-tracker/Notes/github-repository))
+    branch: master
+    private_key: ((yellow-pal-tracker/Notes/github-private-key))
+
+- name: pal-tracker-artifacts
+  type: google-cloud-storage
+  source:
+    bucket: triage-pal-tracker
+    regexp: yellow/releases/pal-tracker-(.*).jar
+    json_key: ((ci-credentials/Notes/djavos-ci-bucket-gcp-key))
+
+- name: version
+  type: semver
+  source:
+    driver: gcs
+    bucket: triage-pal-tracker
+    key: yellow/versions/version
+    json_key: ((ci-credentials/Notes/djavos-ci-bucket-gcp-key))
+
+- name: review-deployment
+  type: cf
+  source:
+    api: https://api.run.pivotal.io
+    username: ((PWS: App Deployment Account/Username))
+    password: ((PWS: App Deployment Account/Password))
+    organization: Davos
+    space: yellow
+
+- name: production-deployment
+  type: cf
+  source:
+    api: https://api.run.pivotal.io
+    username: ((PWS: App Deployment Account/Username))
+    password: ((PWS: App Deployment Account/Password))
+    organization: Davos
+    space: yellow
+
+jobs:
+- name: build
+  plan:
+  - get: pal-tracker
+    trigger: true
+  - get: version
+    params: {bump: patch}
+  - task: build and test
+    file: pal-tracker/ci/build.yml
+  - put: pal-tracker-artifacts
+    params:
+      file: build-output/pal-tracker-*.jar
+  - put: version
+    params:
+      file: version/number
+
+- name: deploy-review
+  plan:
+  - get: pal-tracker
+  - get: pal-tracker-artifacts
+    trigger: true
+    passed: [build]
+  - put: review-deployment
+    params:
+      manifest: pal-tracker/manifest-review.yml
+      path: pal-tracker-artifacts/pal-tracker-*.jar
+      environment_variables:
+        WELCOME_MESSAGE: "Hello from the review environment"
+
+- name: deploy-production
+  plan:
+  - get: pal-tracker
+  - get: pal-tracker-artifacts
+    passed: [deploy-review]
+  - put: production-deployment
+    params:
+      manifest: pal-tracker/manifest-production.yml
+      path: pal-tracker-artifacts/pal-tracker-*.jar
+      environment_variables:
+        WELCOME_MESSAGE: "Hello from the production environment"

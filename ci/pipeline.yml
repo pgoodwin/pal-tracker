@@ -18,7 +18,7 @@ resources:
   source:
     bucket: triage-pal-tracker
     regexp: yellow/releases/pal-tracker-(.*).jar
-    json_key: ((ci-credentials/Notes/djavos-ci-bucket-gcp-key))
+    json_key: ((yellow-pal-tracker/Notes/triage-pal-tracker-bucket-gcp-key))
 
 - name: version
   type: semver
@@ -26,7 +26,7 @@ resources:
     driver: gcs
     bucket: triage-pal-tracker
     key: yellow/versions/version
-    json_key: ((ci-credentials/Notes/djavos-ci-bucket-gcp-key))
+    json_key: ((yellow-pal-tracker/Notes/triage-pal-tracker-bucket-gcp-key))
 
 - name: review-deployment
   type: cf

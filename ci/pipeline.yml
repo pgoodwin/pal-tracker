@@ -49,25 +49,28 @@ resources:
 jobs:
 - name: build
   plan:
-  - get: pal-tracker
-    trigger: true
-  - get: version
-    params: {bump: patch}
+  - aggregate:
+    - get: pal-tracker
+      trigger: true
+    - get: version
+      params: {bump: patch}
   - task: build and test
     file: pal-tracker/ci/build.yml
-  - put: pal-tracker-artifacts
-    params:
-      file: build-output/pal-tracker-*.jar
-  - put: version
-    params:
-      file: version/number
+  - aggregate:
+    - put: pal-tracker-artifacts
+      params:
+        file: build-output/pal-tracker-*.jar
+    - put: version
+      params:
+        file: version/number
 
 - name: deploy-review
   plan:
-  - get: pal-tracker
-  - get: pal-tracker-artifacts
-    trigger: true
-    passed: [build]
+  - aggregate:
+    - get: pal-tracker
+    - get: pal-tracker-artifacts
+      trigger: true
+      passed: [build]
   - put: review-deployment
     params:
       manifest: pal-tracker/manifest-review.yml
@@ -77,9 +80,10 @@ jobs:
 
 - name: deploy-production
   plan:
-  - get: pal-tracker
-  - get: pal-tracker-artifacts
-    passed: [deploy-review]
+  - aggregate:
+    - get: pal-tracker
+    - get: pal-tracker-artifacts
+      passed: [deploy-review]
   - put: production-deployment
     params:
       manifest: pal-tracker/manifest-production.yml

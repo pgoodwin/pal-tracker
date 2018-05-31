@@ -84,7 +84,6 @@ public class TimeEntry {
 
     @Override
     public int hashCode() {
-
         return Objects.hash(id, projectId, userId, date, hours);
     }
 

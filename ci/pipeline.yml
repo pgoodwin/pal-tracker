@@ -72,18 +72,18 @@ jobs:
     - get: pal-tracker-artifacts
       trigger: true
       passed: [build]
-    - task: migrate database
-      file: ./pal-tracker/ci/migrateDatabase.yml
-      params:
-        CF_API_URL: https://api.run.pivotal.io
-        CF_USERNAME: ((PWS: App Deployment Account/Username))
-        CF_PASSWORD: ((PWS: App Deployment Account/Password))
-        CF_ORG: Davos
-        CF_SPACE: yellow-review
-        MYSQL_IP: ((yellow-pal-tracker/Notes/review-db-ip))
-        DATABASE_NAME: ((yellow-pal-tracker/Notes/review-db-name))
-        DATABASE_USERNAME: ((yellow-pal-tracker/Notes/review-db-username))
-        DATABASE_PASSWORD: ((yellow-pal-tracker/Notes/review-db-password))
+  - task: migrate database
+    file: pal-tracker/ci/migrateDatabase.yml
+    params:
+      CF_API_URL: https://api.run.pivotal.io
+      CF_USERNAME: ((PWS: App Deployment Account/Username))
+      CF_PASSWORD: ((PWS: App Deployment Account/Password))
+      CF_ORG: Davos
+      CF_SPACE: yellow-review
+      MYSQL_IP: ((yellow-pal-tracker/Notes/review-db-ip))
+      DATABASE_NAME: ((yellow-pal-tracker/Notes/review-db-name))
+      DATABASE_USERNAME: ((yellow-pal-tracker/Notes/review-db-username))
+      DATABASE_PASSWORD: ((yellow-pal-tracker/Notes/review-db-password))
   - put: review-deployment
     params:
       manifest: pal-tracker/manifest-review.yml
@@ -98,18 +98,18 @@ jobs:
       passed: [deploy-review]
     - get: pal-tracker-artifacts
       passed: [deploy-review]
-    - task: migrate database
-      file: pal-tracker/ci/migrateDatabase.yml
-      params:
-        CF_API_URL: https://api.run.pivotal.io
-        CF_USERNAME: ((PWS: App Deployment Account/Username))
-        CF_PASSWORD: ((PWS: App Deployment Account/Password))
-        CF_ORG: Davos
-        CF_SPACE: yellow
-        MYSQL_IP: ((yellow-pal-tracker/Notes/db-ip))
-        DATABASE_NAME: ((yellow-pal-tracker/Notes/db-name))
-        DATABASE_USERNAME: ((yellow-pal-tracker/Notes/db-username))
-        DATABASE_PASSWORD: ((yellow-pal-tracker/Notes/db-password))
+  - task: migrate database
+    file: pal-tracker/ci/migrateDatabase.yml
+    params:
+      CF_API_URL: https://api.run.pivotal.io
+      CF_USERNAME: ((PWS: App Deployment Account/Username))
+      CF_PASSWORD: ((PWS: App Deployment Account/Password))
+      CF_ORG: Davos
+      CF_SPACE: yellow
+      MYSQL_IP: ((yellow-pal-tracker/Notes/db-ip))
+      DATABASE_NAME: ((yellow-pal-tracker/Notes/db-name))
+      DATABASE_USERNAME: ((yellow-pal-tracker/Notes/db-username))
+      DATABASE_PASSWORD: ((yellow-pal-tracker/Notes/db-password))
   - put: production-deployment
     params:
       manifest: pal-tracker/manifest-production.yml

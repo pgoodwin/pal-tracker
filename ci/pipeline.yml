@@ -73,7 +73,7 @@ jobs:
       trigger: true
       passed: [build]
     - task: migrate database
-      file: pal-tracker/ci/migrateDatabase.yml
+      file: ./pal-tracker/ci/migrateDatabase.yml
       params:
         CF_API_URL: https://api.run.pivotal.io
         CF_USERNAME: ((PWS: App Deployment Account/Username))

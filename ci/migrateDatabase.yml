@@ -8,10 +8,10 @@ image_resource:
 
 inputs:
   - name: pal-tracker
-  - name: version
-
-outputs:
-  - name: build-output
+#  - name: version
+#
+#outputs:
+#  - name: build-output
 
 run:
   path: bash
